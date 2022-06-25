@@ -1,0 +1,99 @@
+# Whether or not to move entities on the bridge along:
+moveEntitiesOnBridge: true
+
+# The speed of the bridge. The number is the number of "ticks" between
+# movements of the bridge. A tick is 1/20 second. In other words, the
+# default value of 30 means 1.5 seconds between movements.
+#
+# If you set this too low your server load may increase exponentially,
+# especially if you have many bridges on your server!
+#
+# Also don't forget that this is a server wide setting for all bridges.
+# Make sure that your users have a say and know about it if you change
+# this setting:
+ticksPerBridgeMovement: 30
+
+# The allowed materials for the bridge. This is a list of block materials. 
+# You can find a list of all possible block materials at
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+#
+# Be very careful when adding block materials to this list. You don't want any
+# flat surface which just happens to be next to a bit of redstone to
+# start flying around!
+#
+# Also don't forget that this is a server wide setting for all bridges.
+# Make sure that your users have a say and know about it if you change
+# this setting:
+bridgeMaterials: [
+  COBBLESTONE_SLAB,
+  DARK_OAK_SLAB,
+  DIORITE_SLAB,
+  ANDESITE_SLAB,
+  GRANITE_SLAB,
+  JUNGLE_SLAB,
+  NETHER_BRICK_SLAB,
+  OAK_SLAB,
+  QUARTZ_SLAB,
+  SPRUCE_SLAB,
+  STONE_BRICK_SLAB,
+  STONE_SLAB,
+  BIRCH_SLAB,
+  ACACIA_SLAB,
+  MANGROVE_SLAB,
+  SMOOTH_STONE_SLAB
+]
+
+# The maximum number of speed boosts allowed by having multiple power
+# blocks (the support blocks beneath the bridge through which the
+# redstone power is delivered to the bridge).
+#
+# If you set this too high your server load may increase exponentially,
+# especially if you have many bridges on your server!
+#
+# Also don't forget that this is a server wide setting for all bridges.
+# Make sure that your users have a say and know about it if you change
+# this setting:
+maximumMultiplePowerBoost: 2
+
+# Whether to allow "floating" bridges; which in this case specifically
+# means bridges that are not touching any solid blocks directly
+# underneath. You can use this to prevent people from having bridges fly
+# away uncontrolled, either by accident or on purpose.
+#
+# Note that water or lava counts as a solid block for this purpose, so
+# you can still create ferries if you disable this.
+#
+# If you set this to "false", bridges will stop moving if they would
+# lose contact with all solid blocks directly underneath them. In other
+# words, it will always remain in contact with at least one solid block
+# underneath.
+#
+# Note that it can still lose contact with its power block(s). This means
+# that it is still possible to bridge large distances or to have two
+# power blocks at the extreme ends of the bridge's travel.
+#
+# Also don't forget that this is a server wide setting for all bridges.
+# Make sure that your users have a say and know about it if you change
+# this setting:
+allowFloatingBridges: true
+
+# The allowed materials for the power blocks (the support blocks beneath
+# the bridge through which the redstone power is delivered to the
+# bridge). This is a list of block materials. You can find a list of all
+# possible block materials at 
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html.
+# If it is empty (the default), any solid block is allowed.
+#
+# By default, the power blocks can be of any solid type. This setting allows
+# you to restrict that, in order to make it harder to build bridges. It
+# may also slightly improve the performance of the plugin.
+#
+# The value is a list of block materials between brackets, separated by
+# commas. For instance, if you want to limit power blocks to diamond or
+# dirt blocks, use the value [DIAMOND_BLOCK, DIRT]. If you want to allow any
+# solid block material, the list should be empty.
+#
+# Don't forget that this is a server wide setting for all bridges. Make
+# sure that your users have a say and know about it if you change this
+# setting:
+bridgePowerBlocks: []
