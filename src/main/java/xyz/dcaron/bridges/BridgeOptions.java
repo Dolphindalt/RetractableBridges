@@ -1,6 +1,8 @@
 package xyz.dcaron.bridges;
 
 import java.util.Set;
+import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
@@ -27,13 +29,22 @@ public class BridgeOptions {
 
     public BridgeOptions(final FileConfiguration configuration) {
 
+        final Function<String, Material> warnForNullStringToMaterialFunc = (materialString) -> {
+            final Material material = Material.getMaterial(materialString);
+            if (material == null) {
+                BridgesPlugin.log("Failed to parse block " + materialString + " from the configuration", Level.WARNING);
+            }
+            return material;
+        };
+
         moveEntitiesOnBridge = configuration.getBoolean("moveEntitiesOnBridge");
 
         ticksPerBridgeMovement = configuration.getInt("ticksPerBridgeMovement");
 
         bridgeMaterials = configuration.getStringList("bridgeMaterials")
                 .stream()
-                .map(material -> Material.getMaterial(material))
+                .map(warnForNullStringToMaterialFunc)
+                .filter(material -> material != null)
                 .collect(Collectors.toUnmodifiableSet());
 
         maximumMultiplePowerBoost = configuration.getInt("maximumMultiplePowerBoost");
@@ -42,7 +53,8 @@ public class BridgeOptions {
 
         bridgePowerBlocks = configuration.getStringList("bridgePowerBlocks")
                 .stream()
-                .map(material -> Material.getMaterial(material))
+                .map(warnForNullStringToMaterialFunc)
+                .filter(material -> material != null)
                 .collect(Collectors.toUnmodifiableSet());
 
         allPowerBlocksAllowed = bridgePowerBlocks.isEmpty();
