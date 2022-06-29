@@ -1,15 +1,20 @@
 package xyz.dcaron.bridges;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @EqualsAndHashCode
+@AllArgsConstructor
 public class Bridge {
 
     @Getter
@@ -24,18 +29,8 @@ public class Bridge {
     @Getter
     @Setter
     private Set<BlockFace> blockedDirections;
-
-    public Bridge(final String worldName, final int x, final int z, final int y, final int width, final int height,
-            final Material type, final Set<BlockFace> blockedDirections) {
-        this.worldName = worldName;
-        this.x = x;
-        this.z = z;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.type = type;
-        this.blockedDirections = blockedDirections;
-    }
+    @Getter
+    private final Optional<Slab.Type> slabType;
 
     @Override
     public String toString() {
@@ -48,6 +43,14 @@ public class Bridge {
         sb.append(" material: ").append(type);
         sb.append(" directions blocked: ").append(blockedDirections.toString());
         return sb.toString();
+    }
+
+    public static Optional<Slab.Type> getSlabType(final BlockData data) {
+        
+        if (data instanceof Slab) {
+            return Optional.of(((Slab) data).getType());
+        }
+        return Optional.empty();
     }
 
 }

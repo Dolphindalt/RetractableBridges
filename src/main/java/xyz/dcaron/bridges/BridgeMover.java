@@ -154,7 +154,20 @@ public class BridgeMover implements Runnable {
         // Its bridge moving time.
         BridgesPlugin.log("Moving bridge " + direction + " one row", Level.FINE);
         for (int i = 0; i < length; i++) {
-            world.getBlockAt(bridge.getX() + dx + i * xMult, bridge.getY(), bridge.getZ() + dz + i * zMult).setType(bridge.getType());
+            final Block blockAhead = world.getBlockAt(bridge.getX() + dx + i * xMult, bridge.getY(), bridge.getZ() + dz + i * zMult);
+
+            // Change the block type.
+            blockAhead.setType(bridge.getType());
+
+            // Loop hoisting will occurr here.
+            // Modify the block's remembered slab state.
+            bridge.getSlabType().ifPresent(slabType -> {
+                final BlockData data = blockAhead.getBlockData();
+                if (data instanceof Slab) {
+                    ((Slab) data).setType(slabType);
+                    blockAhead.setBlockData(data);
+                }
+            });
         }
 
         // Moves entities standing on the bridge.

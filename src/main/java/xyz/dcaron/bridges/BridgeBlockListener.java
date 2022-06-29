@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -85,6 +86,10 @@ public class BridgeBlockListener implements Listener {
 
     }
 
+    private boolean materialWithSlabToBlockEquals(final Block blockToCompare, Material material, Optional<Slab.Type> slabType) {
+        return blockToCompare.getType().equals(material) && Bridge.getSlabType(blockToCompare.getBlockData()).equals(slabType);
+    }
+
     /**
      * Find a bridge above the adjacent block. A bridge is a rectangular area of 
      * slabs or double slabs, parallel to the ground. It can have no holes or bits 
@@ -110,30 +115,34 @@ public class BridgeBlockListener implements Listener {
             int y = aboveBlock.getY();
             int z = aboveBlock.getZ();
             int width = 1, height = 1;
+
             final Material material = aboveBlock.getType();
 
+            // Record the slab orientation if the block is a slab.
+            final Optional<Slab.Type> slabType = Bridge.getSlabType(aboveBlock.getBlockData());
+
             Block adjacentBlock = aboveBlock.getRelative(BlockFace.WEST);
-            while (adjacentBlock.getType().equals(material)) {
+            while (materialWithSlabToBlockEquals(adjacentBlock, material, slabType)) {
                 x--;
                 width++;
                 adjacentBlock = adjacentBlock.getRelative(BlockFace.WEST);
             }
 
             adjacentBlock = aboveBlock.getRelative(BlockFace.NORTH);
-            while (adjacentBlock.getType().equals(material)) {
+            while (materialWithSlabToBlockEquals(adjacentBlock, material, slabType)) {
                 z--;
                 height++;
                 adjacentBlock = adjacentBlock.getRelative(BlockFace.NORTH);
             }
 
             adjacentBlock = aboveBlock.getRelative(BlockFace.EAST);
-            while (adjacentBlock.getType().equals(material)) {
+            while (materialWithSlabToBlockEquals(adjacentBlock, material, slabType)) {
                 width++;
                 adjacentBlock = adjacentBlock.getRelative(BlockFace.EAST);
             }
 
             adjacentBlock = aboveBlock.getRelative(BlockFace.SOUTH);
-            while (adjacentBlock.getType().equals(material)) {
+            while (materialWithSlabToBlockEquals(adjacentBlock, material, slabType)) {
                 height++;
                 adjacentBlock = adjacentBlock.getRelative(BlockFace.SOUTH);
             }
@@ -146,7 +155,7 @@ public class BridgeBlockListener implements Listener {
 
                 for (int dz = 0; dz < height; dz++) {
                     Block edgeBlock = world.getBlockAt(x - 1, y, z + dz);
-                    if (edgeBlock.getType().equals(material)) {
+                    if (materialWithSlabToBlockEquals(edgeBlock, material, slabType)) {
                         // A block is sticking out.
                         return Optional.empty();
                     } else if (!edgeBlock.getType().isAir()) {
@@ -154,7 +163,7 @@ public class BridgeBlockListener implements Listener {
                     }
 
                     edgeBlock = world.getBlockAt(x + width, y, z + dz);
-                    if (edgeBlock.getType().equals(material)) {
+                    if (materialWithSlabToBlockEquals(edgeBlock, material, slabType)) {
                         // A block is sticking out.
                         return Optional.empty();
                     } else if (!edgeBlock.getType().isAir()) {
@@ -164,7 +173,7 @@ public class BridgeBlockListener implements Listener {
 
                 for (int dx = 0; dx < width; dx++) {
                     Block edgeBlock = world.getBlockAt(x + dx, y, z - 1);
-                    if (edgeBlock.getType().equals(material)) {
+                    if (materialWithSlabToBlockEquals(edgeBlock, material, slabType)) {
                         // A block is sticking out.
                         return Optional.empty();
                     } else if (!edgeBlock.getType().isAir()) {
@@ -173,14 +182,14 @@ public class BridgeBlockListener implements Listener {
 
                     for (int dz = 0; dz < height; dz++) {
                         final Block bridgeBlock = world.getBlockAt(x + dx, y, z + dz);
-                        if (!bridgeBlock.getType().equals(material)) {
+                        if (!materialWithSlabToBlockEquals(bridgeBlock, material, slabType)) {
                             // There is a hole in the bridge.
                             return Optional.empty();
                         }
                     }
 
                     edgeBlock = world.getBlockAt(x + dx, y, z + height);
-                    if (edgeBlock.getType().equals(material)) {
+                    if (materialWithSlabToBlockEquals(edgeBlock, material, slabType)) {
                         // A block is sticking out.
                         return Optional.empty();
                     } else if (!edgeBlock.getType().isAir()) {
@@ -191,7 +200,7 @@ public class BridgeBlockListener implements Listener {
                 // The bridge is a proper rectangle.
                 if (this.blockedInThreeDirections(blockedDirections) || 
                     this.opposingDirectionsAreBlocked(blockedDirections)) {
-                        return Optional.of(new Bridge(world.getName(), x, z, y, width, height, material, blockedDirections));
+                        return Optional.of(new Bridge(world.getName(), x, z, y, width, height, material, blockedDirections, slabType));
                 }
             }
 
